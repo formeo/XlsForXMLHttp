@@ -11,6 +11,8 @@
 
   * http://127.0.0.1:8081/payorder/files -- make XML
   * http://127.0.0.1:8081/payorder/backup -- copy files from source dir to backup dir
+## Install
+go get github.com/formeo/XlsForXMLHttp
 
 ## License
 MIT:
