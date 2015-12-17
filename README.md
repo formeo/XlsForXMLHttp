@@ -2,11 +2,10 @@
 
 ## Description
 
-Service starts HTTP server
-Server scans the source directory, select the target files
-Analyzes files and generates XML
-Client refers to the address on the server HTTP
-and server issues formed XML
+* Service starts HTTP server
+* Server scans the source directory, select the target files
+* Analyzes files and generates XML
+* Client refers to the address on the server HTTP and server issues formed XML
 
 ## Usage
 
