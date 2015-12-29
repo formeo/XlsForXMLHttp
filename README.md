@@ -9,7 +9,8 @@
 
 ## Usage
 
-  * http://127.0.0.1:8081/payorder/files -- make XML
+  * http://127.0.0.1:8081/payorder/files/sber -- make XML from sber xls
+  * http://127.0.0.1:8081/payorder/files/zapsib -- make XML from sber zapsib
   * http://127.0.0.1:8081/payorder/backup -- copy files from source dir to backup dir
 
 
