@@ -30,8 +30,8 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
-
-	http.HandleFunc("/payorder/files", funchttp.GetOnly)
+	http.HandleFunc("/payorder/files/zapsib", funchttp.GetOnlyZB)
+	http.HandleFunc("/payorder/files/sber", funchttp.GetOnly)
 	http.HandleFunc("/payorder/backup", funchttp.ToArch)
 	log.Fatal(http.ListenAndServe(":8081", nil))
 

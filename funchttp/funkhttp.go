@@ -3,14 +3,26 @@ package funchttp
 import (
 	"XlsForOra/commonfunc"
 	"XlsForOra/config"
+	_ "fmt"
 	"net/http"
 )
 
-//GetOnly выдает XML файл со списком файлов
-func GetOnly(w http.ResponseWriter, r *http.Request) {
-	res, err := commonfunc.MakeXmlFromXLS(config.Current().PathToFiles)
+//GetOnlyZB выдает XML файл со списком файлов для Зап.Сиб
+func GetOnlyZB(w http.ResponseWriter, r *http.Request) {
+	res, err := commonfunc.MakeXMLFromXLSZB(config.Current().PathToFiles)
 	if err != nil {
-		resErr, _ := commonfunc.MakeErrorXml(err.Error())
+		resErr, _ := commonfunc.MakeErrorXML(err.Error())
+		w.Write(resErr)
+	}
+	w.Write(res)
+	//fmt.Fprintf(w, config.Current().PathToFiles)
+}
+
+//GetOnly выдает XML файл со списком файл
+func GetOnly(w http.ResponseWriter, r *http.Request) {
+	res, err := commonfunc.MakeXMLFromXLS(config.Current().PathToFiles)
+	if err != nil {
+		resErr, _ := commonfunc.MakeErrorXML(err.Error())
 		w.Write(resErr)
 	}
 	w.Write(res)
@@ -21,12 +33,12 @@ func GetOnly(w http.ResponseWriter, r *http.Request) {
 func ToArch(w http.ResponseWriter, r *http.Request) {
 	err := commonfunc.CopyToArchive(config.Current().PathToFiles, config.Current().PathToBackupFolder)
 	if err != nil {
-		resErr, _ := commonfunc.MakeErrorXml(err.Error())
+		resErr, _ := commonfunc.MakeErrorXML(err.Error())
 		w.Write(resErr)
 	}
-	res, err := commonfunc.MakeBackupXml()
+	res, err := commonfunc.MakeBackupXML()
 	if err != nil {
-		resErr, _ := commonfunc.MakeErrorXml(err.Error())
+		resErr, _ := commonfunc.MakeErrorXML(err.Error())
 		w.Write(resErr)
 	}
 	w.Write(res)
