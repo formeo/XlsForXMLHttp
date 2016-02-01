@@ -13,6 +13,7 @@ var cfg *Config
 type Config struct {
 	PathToFiles        string `json:"PathToFiles"`
 	PathToBackupFolder string `json:"PathToBackupFolder"`
+	PathToClearDir     string `json:"PathToClearDir"`
 	file               string
 }
 

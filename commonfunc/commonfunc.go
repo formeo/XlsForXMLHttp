@@ -5,9 +5,15 @@ import (
 	"XlsForOra/xmlstruck"
 	"encoding/xml"
 	"github.com/aswjh/excel"
+	ole "github.com/go-ole/go-ole"
+	"github.com/go-ole/go-ole/oleutil"
+	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
+	"os/exec"
+	_ "strconv"
+	_ "strings"
+	"time"
 )
 
 //CopyToArchive копирует все файлы в архив и удаляет из источника
@@ -64,37 +70,117 @@ func MakeBackupXML() (res []byte, err error) {
 
 }
 
-//MakeXMLFromXLSZB формирует окончательную XML
-func MakeXMLFromXLSZB(PathDir string) (res []byte, err error) {
-	var s string
-	v := &xmlstruck.Servers{Version: "1", Code: "0", Message: ""}
-	dir, err := os.Open(PathDir)
-	if err != nil {
-		return
+func ParceZB(PathDir string) (Folder string, err error) {
+	t := time.Now()
+	
+	Folder = t.Format("20060102150405")
+	log.Println("make folder ",Folder)
+	if err := os.MkdirAll(PathDir+Folder, 0777); err != nil {
+		return Folder, err
 	}
-	defer dir.Close()
+	result, err := filesutil.DelForMask(PathDir+"\\"+Folder+"\\", "Sheet")
+	if err != nil {
+		return Folder, err
+	}
+	if !result {
+		return Folder, err
+	}
+	log.Println("start parce")
+	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\filename.vbs", PathDir+"drvscrp\\", PathDir, Folder)
+	err = cmd.Run()
+	if err != nil {
+		return Folder, err
+	}
+	log.Println("finish parce")
+	return Folder, nil
+}
 
-	option := excel.Option{"Visible": false, "DisplayAlerts": false}
-	xl, err := excel.Open(PathDir+"RurPaymentDemand.xls", option)
+func MakeXMLtest() (res []byte, err error) {
+	
+	res, err = ioutil.ReadFile("C:\\paynotes\\20160127092609\\zapsib.xml")
 	if err != nil {
 		return nil, err
 	}
-	defer xl.Quit()
+	return res, nil
+}
 
-	for i := 1; i < xl.CountSheets()+1; i++ {
-		err := filesutil.DelSheet(i, PathDir+"RurPaymentDemand.xls", PathDir)
-		if err != nil {
-			return nil, err
+//MakeXMLFromXLSZBvbs
+func MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
+	log.Println("MakeXMLFromXLSZB")
+	Folder, err := ParceZB(PathDir)
 
-		}
-		item, err := filesutil.FileToRowZP(PathDir+"zap"+strconv.Itoa(i)+".xls", "zap"+strconv.Itoa(i)+".xls")
-		log.Println(item)
-		if err != nil {
-			return nil, err
-
-		}
-		v.Svs = append(v.Svs, *item)
+	if err != nil {
+		return nil, err
 	}
+	log.Println("start make xml")
+	log.Println("PathDir",PathDir)
+	log.Println("Folder",Folder)
+	
+	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\2.vbs", PathDir+Folder+"\\", Folder)
+	err = cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+	log.Println("finish xml")
+	res, err = ioutil.ReadFile(PathDir + Folder + "\\zapsib.xml")
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+//MakeXMLFromXLSZB формирует окончательную XML
+func MakeXMLFromXLSZB(PathDir string, Folder string) (res []byte, err error) {
+	var (
+		s   string
+		exl *excel.MSO
+	)
+	v := &xmlstruck.Servers{Version: "1", Code: "0", Message: ""}
+	dir, err := os.Open(PathDir + "\\" + Folder + "\\")
+	if err != nil {
+		return nil, err
+	}
+	defer dir.Close()
+	//чистим папку
+
+	fileInfos, err := dir.Readdir(-1)
+	if err != nil {
+		return nil, err
+	}
+	log.Println("start parce")
+
+	ole.CoInitialize(0)
+	unknown, _ := oleutil.CreateObject("Excel.Application")
+	excel, _ := unknown.QueryInterface(ole.IID_IDispatch)
+	oleutil.PutProperty(excel, "Visible", false)
+	workbooks := oleutil.MustGetProperty(excel, "Workbooks").ToIDispatch()
+
+	
+
+	log.Println("exl", exl)
+
+	for _, fi := range fileInfos {
+		if !fi.IsDir() {
+
+			item, err := filesutil.FileToRowZPNew(PathDir+"\\"+Folder+"\\"+fi.Name(), "\\"+Folder+"\\"+fi.Name(), excel, workbooks)
+			log.Println(item)
+			if err != nil {
+				return nil, err
+			}
+			if item != nil {
+				v.Svs = append(v.Svs, *item)
+			}
+
+		}
+	}
+	//err = exl.Quit()
+
+	workbooks.Release()
+	excel.Release()
+	ole.CoUninitialize()
+
+	log.Println("err Quit", err)
+	
 	if len(v.Svs) == 0 {
 		v.Code = "404"
 		v.Message = "files not found"
@@ -112,6 +198,7 @@ func MakeXMLFromXLSZB(PathDir string) (res []byte, err error) {
 //MakeXMLFromXLS формирует окончательную XML
 func MakeXMLFromXLS(PathDir string) (res []byte, err error) {
 	var s string
+	log.Println("MakeXMLFromSBER")
 	bres, err := filesutil.DelForMask(PathDir, "zap")
 	if bres != true {
 		if err != nil {
@@ -157,4 +244,31 @@ func MakeXMLFromXLS(PathDir string) (res []byte, err error) {
 	res = mySlice
 	return res, nil
 
+}
+
+func MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
+	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\sber.vbs", PathDir)
+	err = cmd.Run()
+	if err != nil {
+		return nil, err
+	}
+	res, err = ioutil.ReadFile(PathDir + "\\sber.xml")
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+
+}
+
+func ClearDirectory(PathDir string,PathDirToClear string)(err error){
+	
+	log.Println("start delete")
+	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\delete.vbs", PathDirToClear)
+	err = cmd.Run()
+	if err != nil {
+		return err
+	}
+	log.Println("finish delete")
+	return nil	
+	
 }

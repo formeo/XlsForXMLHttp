@@ -30,9 +30,11 @@ func (p *program) Start(s service.Service) error {
 	return nil
 }
 func (p *program) run() {
+	http.HandleFunc("/payorder/files/test", funchttp.Test)
 	http.HandleFunc("/payorder/files/zapsib", funchttp.GetOnlyZB)
 	http.HandleFunc("/payorder/files/sber", funchttp.GetOnly)
 	http.HandleFunc("/payorder/backup", funchttp.ToArch)
+	http.HandleFunc("/payorder/clear", funchttp.ClearDir)
 	log.Fatal(http.ListenAndServe(":8081", nil))
 
 }

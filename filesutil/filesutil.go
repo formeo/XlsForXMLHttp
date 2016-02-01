@@ -4,7 +4,10 @@ import (
 	"XlsForOra/xmlstruck"
 	"errors"
 	"github.com/aswjh/excel"
+	ole "github.com/go-ole/go-ole"
+	"github.com/go-ole/go-ole/oleutil"
 	"io"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -56,26 +59,69 @@ func DelSheet(number int, sourceFile string, dirFiles string) (err error) {
 }
 
 //FileToRowZP Извлекает из XLS файла необходимую информацию
-func FileToRowZP(FilePath string, FileName string) (*xmlstruck.Files, error) {
+func FileToRowZP(FilePath string, FileName string, Exl *excel.MSO) (*xmlstruck.Files, error) {
 	var res *xmlstruck.Files
-	option := excel.Option{"Visible": false, "DisplayAlerts": false}
-	xlparse, err := excel.Open(FilePath, option)
+
+	log.Println("OpenWorkBook")
+	wb, err := Exl.OpenWorkBook(FilePath)
+	log.Println(err)
+	log.Println("Activate")
+	err = wb.Activate()
+	log.Println(err)
+	sheet, err := wb.SelectSheet(1)
+	log.Println(sheet)
 	if err != nil {
 		return nil, err
 	}
-	defer xlparse.Quit()
-	sheet, _ := xlparse.Sheet(1)
-	if sheet.MustCells(3, 1) == "ПЛАТЕЖНОЕ ПОРУЧЕНИЕ" {
-		s := strings.Trim(sheet.MustCells(3, 4), "№ ")
+	if sheet.MustCellsNew(3, 1) == "ПЛАТЕЖНОЕ ПОРУЧЕНИЕ" {
+		s := strings.Trim(sheet.MustCellsNew(3, 4), "№ ")
 
-		res = &xmlstruck.Files{Number: s, Date: sheet.MustCells(3, 6), Summ: sheet.MustCells(8, 7), Filename: FileName}
+		res = &xmlstruck.Files{Number: s, Date: sheet.MustCellsNew(3, 6), Summ: sheet.MustCellsNew(8, 7), Filename: FileName}
+
+	}	
+
+	err = wb.Close()
+	log.Println(err)
+	return res, nil
+}
+
+func FileToRowZPNew(FilePath string, FileName string, excel, workbooks *ole.IDispatch) (*xmlstruck.Files, error) {
+	var res *xmlstruck.Files
+
+	log.Println("OpenWorkBookNEEEEEW")
+	log.Println("Openworkbook")
+	workbook, err := oleutil.CallMethod(workbooks, "Open", FilePath)
+	log.Println(err)
+	defer workbook.ToIDispatch().Release()
+	log.Println("Openworksheet")
+	worksheet := oleutil.MustGetProperty(workbook.ToIDispatch(), "Worksheets", 1).ToIDispatch()
+	defer worksheet.Release()
+	log.Println(worksheet)	
+	log.Println(err)
+	log.Println("Activate")
+	
+
+	cell := oleutil.MustGetProperty(worksheet, "Cells", 3, 1).ToIDispatch()
+	val, err := oleutil.GetProperty(cell, "Value")
+
+	if val.ToString() == "ПЛАТЕЖНОЕ ПОРУЧЕНИЕ" {
+		cell := oleutil.MustGetProperty(worksheet, "Cells", 3, 4).ToIDispatch()
+		val, err := oleutil.GetProperty(cell, "Value")
+		log.Println(err)
+		s := strings.Trim(val.ToString(), "№ ")
+
+		cell = oleutil.MustGetProperty(worksheet, "Cells", 3, 6).ToIDispatch()
+		date, err := oleutil.GetProperty(cell, "Value")
+
+		cell = oleutil.MustGetProperty(worksheet, "Cells", 8, 7).ToIDispatch()
+		summ, err := oleutil.GetProperty(cell, "Value")
+
+		res = &xmlstruck.Files{Number: s, Date: date.ToString(), Summ: summ.ToString(), Filename: FileName}
 
 	}
 
-	if sheet.MustCells(5, 1) == "ПЛАТЕЖНОЕ ТРЕБОВАНИЕ №" {
-		res = &xmlstruck.Files{Number: sheet.MustCells(5, 12), Date: sheet.MustCells(5, 18), Summ: sheet.MustCells(14, 24), Filename: FileName}
-
-	}
+	
+	log.Println(err)
 	return res, nil
 }
 
