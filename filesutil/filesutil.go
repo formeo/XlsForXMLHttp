@@ -13,7 +13,6 @@ import (
 	"strings"
 )
 
-//FileToRow Извлекает из XLS файла необходимую информацию
 func FileToRow(FilePath string, FileName string) (*xmlstruck.Files, error) {
 
 	option := excel.Option{"Visible": false, "DisplayAlerts": false}
@@ -78,7 +77,7 @@ func FileToRowZP(FilePath string, FileName string, Exl *excel.MSO) (*xmlstruck.F
 
 		res = &xmlstruck.Files{Number: s, Date: sheet.MustCellsNew(3, 6), Summ: sheet.MustCellsNew(8, 7), Filename: FileName}
 
-	}	
+	}
 
 	err = wb.Close()
 	log.Println(err)
@@ -96,10 +95,9 @@ func FileToRowZPNew(FilePath string, FileName string, excel, workbooks *ole.IDis
 	log.Println("Openworksheet")
 	worksheet := oleutil.MustGetProperty(workbook.ToIDispatch(), "Worksheets", 1).ToIDispatch()
 	defer worksheet.Release()
-	log.Println(worksheet)	
+	log.Println(worksheet)
 	log.Println(err)
 	log.Println("Activate")
-	
 
 	cell := oleutil.MustGetProperty(worksheet, "Cells", 3, 1).ToIDispatch()
 	val, err := oleutil.GetProperty(cell, "Value")
@@ -120,7 +118,6 @@ func FileToRowZPNew(FilePath string, FileName string, excel, workbooks *ole.IDis
 
 	}
 
-	
 	log.Println(err)
 	return res, nil
 }
