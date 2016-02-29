@@ -72,9 +72,9 @@ func MakeBackupXML() (res []byte, err error) {
 
 func ParceZB(PathDir string) (Folder string, err error) {
 	t := time.Now()
-	
+
 	Folder = t.Format("20060102150405")
-	log.Println("make folder ",Folder)
+	log.Println("make folder ", Folder)
 	if err := os.MkdirAll(PathDir+Folder, 0777); err != nil {
 		return Folder, err
 	}
@@ -96,7 +96,7 @@ func ParceZB(PathDir string) (Folder string, err error) {
 }
 
 func MakeXMLtest() (res []byte, err error) {
-	
+
 	res, err = ioutil.ReadFile("C:\\paynotes\\20160127092609\\zapsib.xml")
 	if err != nil {
 		return nil, err
@@ -113,9 +113,9 @@ func MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
 		return nil, err
 	}
 	log.Println("start make xml")
-	log.Println("PathDir",PathDir)
-	log.Println("Folder",Folder)
-	
+	log.Println("PathDir", PathDir)
+	log.Println("Folder", Folder)
+
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\2.vbs", PathDir+Folder+"\\", Folder)
 	err = cmd.Run()
 	if err != nil {
@@ -155,8 +155,6 @@ func MakeXMLFromXLSZB(PathDir string, Folder string) (res []byte, err error) {
 	oleutil.PutProperty(excel, "Visible", false)
 	workbooks := oleutil.MustGetProperty(excel, "Workbooks").ToIDispatch()
 
-	
-
 	log.Println("exl", exl)
 
 	for _, fi := range fileInfos {
@@ -180,7 +178,7 @@ func MakeXMLFromXLSZB(PathDir string, Folder string) (res []byte, err error) {
 	ole.CoUninitialize()
 
 	log.Println("err Quit", err)
-	
+
 	if len(v.Svs) == 0 {
 		v.Code = "404"
 		v.Message = "files not found"
@@ -260,8 +258,8 @@ func MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
 
 }
 
-func ClearDirectory(PathDir string,PathDirToClear string)(err error){
-	
+func ClearDirectory(PathDir string, PathDirToClear string) (err error) {
+
 	log.Println("start delete")
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\delete.vbs", PathDirToClear)
 	err = cmd.Run()
@@ -269,6 +267,6 @@ func ClearDirectory(PathDir string,PathDirToClear string)(err error){
 		return err
 	}
 	log.Println("finish delete")
-	return nil	
-	
+	return nil
+
 }
