@@ -1,8 +1,8 @@
 package commonfunc
 
 import (
-	"XlsForOra/filesutil"
-	"XlsForOra/xmlstruck"
+	"github.com/formeo/XlsForXMLHttp/filesutil"
+	"github.com/formeo/XlsForXMLHttp/xmlstruck"
 	"encoding/xml"
 	"github.com/aswjh/excel"
 	ole "github.com/go-ole/go-ole"
