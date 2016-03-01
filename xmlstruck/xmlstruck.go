@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 )
 
-//Servers Шапка XML
+//Servers Шапка XML шапка
 type Servers struct {
 	XMLName xml.Name `xml:"xslfiles"`
 	Version string   `xml:"version,attr"`
