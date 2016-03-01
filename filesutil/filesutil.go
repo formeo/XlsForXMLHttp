@@ -1,7 +1,7 @@
 package filesutil
 
 import (
-	"github.com/formeo/XlsForOra/xmlstruck"
+	"github.com/formeo/XlsForXMLHttp/xmlstruck"
 	"errors"
 	"github.com/aswjh/excel"
 	ole "github.com/go-ole/go-ole"

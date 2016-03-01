@@ -3,7 +3,7 @@ package main
 
 /**/
 import (
-	"github.com/formeo/XlsForOra/funchttp"
+	"github.com/formeo/XlsForXMLHttp/funchttp"
 	"flag"
 	"fmt"
 	"github.com/kardianos/service"
