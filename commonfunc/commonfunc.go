@@ -2,8 +2,8 @@ package commonfunc
 
 import (
 	"github.com/formeo/XlsForXMLHttp/filesutil"
-	"github.com/formeo/XlsForXMLHttp/xmlstruck"
-	"encoding/xml"	
+	"github.com/formeo/XlsForXMLHttp/xmlstruck"         
+	"encoding/xml"	          
 	"io/ioutil"
 	"log"
 	"os"
