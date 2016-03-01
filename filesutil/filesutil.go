@@ -1,11 +1,9 @@
 package filesutil
 
 import (
-	"github.com/formeo/XlsForOra/xmlstruck"
+	"github.com/formeo/XlsForXMLHttp/xmlstruck"
 	"errors"
-	"github.com/aswjh/excel"
-	ole "github.com/go-ole/go-ole"
-	"github.com/go-ole/go-ole/oleutil"
+	"github.com/aswjh/excel"	
 	"io"
 	"log"
 	"os"
@@ -84,9 +82,9 @@ func FileToRowZP(FilePath string, FileName string, Exl *excel.MSO) (*xmlstruck.F
 	log.Println(err)
 	return res, nil
 }
-
+/*
 func FileToRowZPNew(FilePath string, FileName string, excel, workbooks *ole.IDispatch) (*xmlstruck.Files, error) {
-	var res *xmlstruck.Files
+	/*var res *xmlstruck.Files
 
 	log.Println("OpenWorkBookNEEEEEW")
 	log.Println("Openworkbook")
@@ -121,7 +119,8 @@ func FileToRowZPNew(FilePath string, FileName string, excel, workbooks *ole.IDis
 
 	log.Println(err)
 	return res, nil
-}
+	return nil, nil
+}*/
 
 //копирует файлы
 func FileCopy(source, dest string, overwrite bool) (bool, error) {

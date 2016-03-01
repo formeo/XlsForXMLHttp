@@ -1,12 +1,11 @@
 package commonfunc
 
 import (
-	"github.com/formeo/XlsForOra/filesutil"
-	"github.com/formeo/XlsForOra/xmlstruck"
+	"github.com/formeo/XlsForXMLHttp/filesutil"
+	"github.com/formeo/XlsForXMLHttp/xmlstruck"
 	"encoding/xml"
-	"github.com/aswjh/excel"
-	ole "github.com/go-ole/go-ole"
-	"github.com/go-ole/go-ole/oleutil"
+	_"github.com/aswjh/excel"
+	
 	"io/ioutil"
 	"log"
 	"os"
@@ -131,7 +130,7 @@ func MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
 
 //MakeXMLFromXLSZB формирует окончательную XML
 func MakeXMLFromXLSZB(PathDir string, Folder string) (res []byte, err error) {
-	var (
+	/*var (
 		s   string
 		exl *excel.MSO
 	)
@@ -149,7 +148,7 @@ func MakeXMLFromXLSZB(PathDir string, Folder string) (res []byte, err error) {
 	}
 	log.Println("start parce")
 
-	ole.CoInitialize(0)
+	/*ole.CoInitialize(0)
 	unknown, _ := oleutil.CreateObject("Excel.Application")
 	excel, _ := unknown.QueryInterface(ole.IID_IDispatch)
 	oleutil.PutProperty(excel, "Visible", false)
@@ -175,9 +174,9 @@ func MakeXMLFromXLSZB(PathDir string, Folder string) (res []byte, err error) {
 
 	workbooks.Release()
 	excel.Release()
-	ole.CoUninitialize()
+	ole.CoUninitialize()*/
 
-	log.Println("err Quit", err)
+	/*log.Println("err Quit", err)
 
 	if len(v.Svs) == 0 {
 		v.Code = "404"
@@ -189,8 +188,8 @@ func MakeXMLFromXLSZB(PathDir string, Folder string) (res []byte, err error) {
 	}
 	s += string(output)
 	mySlice := []byte(xml.Header + string(output))
-	res = mySlice
-	return res, nil
+	res = mySlice*/
+	return nil, nil
 }
 
 //MakeXMLFromXLS формирует окончательную XML
