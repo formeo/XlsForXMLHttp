@@ -3,7 +3,6 @@ package filesutil
 import (  
 	_"github.com/formeo/XlsForXMLHttp/xmlstruck"
 	_"errors"
-	_"github.com/aswjh/excel"	     
 	"io"
 	_"log"
 	"os"
