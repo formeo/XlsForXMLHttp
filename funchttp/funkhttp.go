@@ -1,8 +1,8 @@
 package funchttp
 
 import (
-	"github.com/formeo/XlsForXMLHttp/commonfunc"
-	"github.com/formeo/XlsForXMLHttp/config"
+	"github.com/formeo/XlsForOra/commonfunc"
+	"github.com/formeo/XlsForOra/config"
 	_ "fmt"
 	"net/http"
 	"log"

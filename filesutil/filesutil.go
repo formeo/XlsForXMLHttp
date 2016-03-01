@@ -1,7 +1,7 @@
 package filesutil
 
 import (
-	"github.com/formeo/XlsForXMLHttp/xmlstruck"
+	"github.com/formeo/XlsForOra/xmlstruck"
 	"errors"
 	"github.com/aswjh/excel"
 	ole "github.com/go-ole/go-ole"
@@ -13,6 +13,7 @@ import (
 	"strings"
 )
 
+//FileToRow Извлекает из XLS файла необходимую информацию
 func FileToRow(FilePath string, FileName string) (*xmlstruck.Files, error) {
 
 	option := excel.Option{"Visible": false, "DisplayAlerts": false}
