@@ -1,20 +1,18 @@
 package filesutil
 
 import (
-	"github.com/formeo/XlsForOra/xmlstruck"
-	"errors"
-	"github.com/aswjh/excel"
-	ole "github.com/go-ole/go-ole"
-	"github.com/go-ole/go-ole/oleutil"
+	_"github.com/formeo/XlsForXMLHttp/xmlstruck"
+	_"errors"
+	_"github.com/aswjh/excel"	
 	"io"
-	"log"
+	_"log"
 	"os"
-	"strconv"
+	_"strconv"
 	"strings"
 )
 
 //FileToRow Извлекает из XLS файла необходимую информацию
-func FileToRow(FilePath string, FileName string) (*xmlstruck.Files, error) {
+/*func FileToRow(FilePath string, FileName string) (*xmlstruck.Files, error) {
 
 	option := excel.Option{"Visible": false, "DisplayAlerts": false}
 	xl, err := excel.Open(FilePath, option)
@@ -27,10 +25,10 @@ func FileToRow(FilePath string, FileName string) (*xmlstruck.Files, error) {
 	res := &xmlstruck.Files{Number: sheet.MustCells(6, 12), Date: sheet.MustCells(5, 15), Summ: sheet.MustCells(11, 21), Filename: FileName}
 	return res, nil
 }
-
+*/
 //DelSheet разбивает файл на несколько фрагментов по листам
 func DelSheet(number int, sourceFile string, dirFiles string) (err error) {
-	option := excel.Option{"Visible": false, "DisplayAlerts": false}
+	/*option := excel.Option{"Visible": false, "DisplayAlerts": false}
 	res, err := FileCopy(sourceFile, dirFiles+"zap"+strconv.Itoa(number)+".xls", true)
 	if res != true {
 		if err != nil {
@@ -54,12 +52,12 @@ func DelSheet(number int, sourceFile string, dirFiles string) (err error) {
 			j = j + 1
 		}
 	}
-	xlnew.Save()
+	xlnew.Save()*/
 	return nil
 }
 
 //FileToRowZP Извлекает из XLS файла необходимую информацию
-func FileToRowZP(FilePath string, FileName string, Exl *excel.MSO) (*xmlstruck.Files, error) {
+/*func FileToRowZP(FilePath string, FileName string, Exl *excel.MSO) (*xmlstruck.Files, error) {
 	var res *xmlstruck.Files
 
 	log.Println("OpenWorkBook")
@@ -83,10 +81,10 @@ func FileToRowZP(FilePath string, FileName string, Exl *excel.MSO) (*xmlstruck.F
 	err = wb.Close()
 	log.Println(err)
 	return res, nil
-}
-
+}*/
+/*
 func FileToRowZPNew(FilePath string, FileName string, excel, workbooks *ole.IDispatch) (*xmlstruck.Files, error) {
-	var res *xmlstruck.Files
+	/*var res *xmlstruck.Files
 
 	log.Println("OpenWorkBookNEEEEEW")
 	log.Println("Openworkbook")
@@ -121,7 +119,8 @@ func FileToRowZPNew(FilePath string, FileName string, excel, workbooks *ole.IDis
 
 	log.Println(err)
 	return res, nil
-}
+	return nil, nil
+}*/
 
 //копирует файлы
 func FileCopy(source, dest string, overwrite bool) (bool, error) {
