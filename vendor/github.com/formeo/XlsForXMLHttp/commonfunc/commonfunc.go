@@ -1,9 +1,9 @@
 package commonfunc
 
 import (
-	"encoding/xml"
 	"github.com/formeo/XlsForXMLHttp/filesutil"
-	"github.com/formeo/XlsForXMLHttp/xmlstruck"
+	"github.com/formeo/XlsForXMLHttp/xmlstruck"         
+	"encoding/xml"	          
 	"io/ioutil"
 	"log"
 	"os"
@@ -125,6 +125,121 @@ func MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
 	}
 	return res, nil
 }
+
+//MakeXMLFromXLSZB формирует окончательную XML
+func MakeXMLFromXLSZB(PathDir string, Folder string) (res []byte, err error) {
+	/*var (
+		s   string
+		exl *excel.MSO
+	)
+	v := &xmlstruck.Servers{Version: "1", Code: "0", Message: ""}
+	dir, err := os.Open(PathDir + "\\" + Folder + "\\")
+	if err != nil {
+		return nil, err
+	}
+	defer dir.Close()
+	//чистим папку
+
+	fileInfos, err := dir.Readdir(-1)
+	if err != nil {
+		return nil, err
+	}
+	log.Println("start parce")
+
+	/*ole.CoInitialize(0)
+	unknown, _ := oleutil.CreateObject("Excel.Application")
+	excel, _ := unknown.QueryInterface(ole.IID_IDispatch)
+	oleutil.PutProperty(excel, "Visible", false)
+	workbooks := oleutil.MustGetProperty(excel, "Workbooks").ToIDispatch()
+
+	log.Println("exl", exl)
+
+	for _, fi := range fileInfos {
+		if !fi.IsDir() {
+
+			item, err := filesutil.FileToRowZPNew(PathDir+"\\"+Folder+"\\"+fi.Name(), "\\"+Folder+"\\"+fi.Name(), excel, workbooks)
+			log.Println(item)
+			if err != nil {
+				return nil, err
+			}
+			if item != nil {
+				v.Svs = append(v.Svs, *item)
+			}
+
+		}
+	}
+	//err = exl.Quit()
+
+	workbooks.Release()
+	excel.Release()
+	ole.CoUninitialize()*/
+
+	/*log.Println("err Quit", err)
+
+	if len(v.Svs) == 0 {
+		v.Code = "404"
+		v.Message = "files not found"
+	}
+	output, err := xml.MarshalIndent(v, "  ", "    ")
+	if err != nil {
+		return nil, err
+	}
+	s += string(output)
+	mySlice := []byte(xml.Header + string(output))
+	res = mySlice*/
+	return nil, nil
+}
+
+//MakeXMLFromXLS формирует окончательную XML
+/*func MakeXMLFromXLS(PathDir string) (res []byte, err error) {
+	var s string
+	log.Println("MakeXMLFromSBER")
+	bres, err := filesutil.DelForMask(PathDir, "zap")
+	if bres != true {
+		if err != nil {
+			return nil, err
+		}
+	}
+	v := &xmlstruck.Servers{Version: "1", Code: "0", Message: ""}
+	dir, err := os.Open(PathDir)
+	if err != nil {
+		return nil, err
+	}
+	defer dir.Close()
+
+	fileInfos, err := dir.Readdir(-1)
+	if err != nil {
+		return nil, err
+	}
+	for _, fi := range fileInfos {
+		if !fi.IsDir() {
+			if fi.Name() != "RurPaymentDemand.xls" {
+				item, err := filesutil.FileToRow(PathDir+fi.Name(), fi.Name())
+				log.Println(item)
+				if err != nil {
+					return nil, err
+
+				}
+				v.Svs = append(v.Svs, *item)
+			}
+		}
+	}
+	if len(v.Svs) == 0 {
+		v.Code = "404"
+		v.Message = "files not found"
+	}
+	output, err := xml.MarshalIndent(v, "  ", "    ")
+	if err != nil {
+		return nil, err
+	}
+	/*s = xml.Header*/
+/*	s += string(output)
+	//mySlice := []byte(xml.Header + string(output))
+	mySlice := []byte(xml.Header + string(output))
+	res = mySlice
+	return res, nil
+
+}*/
 
 func MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\sber.vbs", PathDir)

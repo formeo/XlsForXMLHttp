@@ -1,47 +1,16 @@
-// XlsForOra project main.go
 package main
 
-/**/
 import (
-	"github.com/formeo/XlsForXMLHttp/funchttp"
+	"XlsForXMLHttp/application"
 	"flag"
 	"fmt"
 	"github.com/kardianos/service"
 	"log"
-	"net/http"
 	"os"
 )
 
-var logger service.Logger
 var install bool
 var uninstall bool
-
-type program struct{}
-
-func (p *program) Start(s service.Service) error {
-	if service.Interactive() {
-		log.Println("XlsForOra running in terminal. It is not correct run a programm")
-		//return nil
-	} else {
-		log.Println("XlsForOra running under service manager.")
-
-	}
-	go p.run()
-	return nil
-}
-func (p *program) run() {
-	http.HandleFunc("/payorder/files/test", funchttp.Test)
-	http.HandleFunc("/payorder/files/zapsib", funchttp.GetOnlyZB)
-	http.HandleFunc("/payorder/files/sber", funchttp.GetOnly)
-	http.HandleFunc("/payorder/backup", funchttp.ToArch)
-	http.HandleFunc("/payorder/clear", funchttp.ClearDir)
-	log.Fatal(http.ListenAndServe(":8081", nil))
-
-}
-func (p *program) Stop(s service.Service) error {
-	// Stop should not block. Return with a few seconds.
-	return nil
-}
 
 //CommandLineParse Парсит командную строку
 func CommandLineParse() {
@@ -71,21 +40,26 @@ func CommandLineParse() {
 	}
 }
 
-func run(s service.Service) {
-
+func run(s service.Service) error {
+	var err error
 	if install {
-		s.Install()
-		return
+		if err = s.Install(); err != nil {
+			return err
+		}
+		return nil
 	}
 
 	if uninstall {
-		s.Uninstall()
-		return
+		if err = s.Uninstall(); err != nil {
+			return err
+		}
+		return nil
 	}
 
-	if err := s.Run(); err != nil {
-		fmt.Println(err)
+	if err = s.Run(); err != nil {
+		return err
 	}
+	return nil
 }
 func main() {
 	CommandLineParse()
@@ -95,15 +69,16 @@ func main() {
 		Description: "This is an XlsForOra Go service.",
 	}
 
-	prg := &program{}
+	prg := application.AppNew()
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
-	logger, err = s.Logger(nil)
+	_, err = s.Logger(nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	run(s)
-
+	if err = run(s); err != nil {
+		log.Fatal(err)
+	}
 }
