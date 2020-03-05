@@ -1,9 +1,9 @@
 package application
 
 import (
-	"XlsForXMLHttp/config"
-	"XlsForXMLHttp/funchttp"
 	"fmt"
+	"github.com/formeo/XlsForXMLHttp/config"
+	"github.com/formeo/XlsForXMLHttp/funchttp"
 	"github.com/gorilla/mux"
 	"github.com/kardianos/service"
 	"go.uber.org/zap"
