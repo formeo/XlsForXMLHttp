@@ -1,14 +1,8 @@
 # github.com/BurntSushi/toml v0.3.1
 github.com/BurntSushi/toml
-# github.com/formeo/XlsForXMLHttp v0.0.0-20160301045833-89b24197a169
-github.com/formeo/XlsForXMLHttp/commonfunc
-github.com/formeo/XlsForXMLHttp/config
-github.com/formeo/XlsForXMLHttp/filesutil
-github.com/formeo/XlsForXMLHttp/funchttp
-github.com/formeo/XlsForXMLHttp/xmlstruck
 # github.com/getsentry/sentry-go v0.5.1
 github.com/getsentry/sentry-go
-# github.com/gorilla/mux v1.7.3
+# github.com/gorilla/mux v1.7.4
 github.com/gorilla/mux
 # github.com/kardianos/service v1.0.0
 github.com/kardianos/service
