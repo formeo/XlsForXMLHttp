@@ -1,46 +1,31 @@
 package config
 
 import (
-	"encoding/json"
-	"io/ioutil"
-	"os"
-	"path/filepath"
+	"github.com/kelseyhightower/envconfig"
 )
 
-var cfg *Config
+const EnvPrefix = "Xls"
 
-//Config тип для конфига указывается папка с файлами и папка для бэкапа
 type Config struct {
-	PathToFiles        string `json:"PathToFiles"`
-	PathToBackupFolder string `json:"PathToBackupFolder"`
-	PathToClearDir     string `json:"PathToClearDir"`
-	file               string
+	Port       int    `envconfig:"SERVER_PORT" default:"8080"`
+	DevMode    bool   `envconfig:"DEV_MODE"`
+	Index      string `envconfig:"INDEX" default:"test"`
+	LogLevel  string `envconfig:"LOG_LEVEL" default:"debug"`
+	SentryDSN string `envconfig:"SENTRY_DSN"`
+	PathToFiles string `envconfig:"FILES_PATH"`
+	PathToBackupFolder string `envconfig:"FOLDER_PATH"`
+	PathToClearDir string `envconfig:"FOLDER_CLEAN_PATH"`
 }
 
-//Current Функция возвращает текущий конфиг
-func Current() *Config {
-	if cfg == nil {
-		fileconfig := filepath.Join(filepath.Dir(os.Args[0]), "config.json")
-		if cfg == nil {
-			var err error
-			cfg, err = New(fileconfig)
-			cfg.file = fileconfig
-			if err != nil {
-				panic(err)
-			}
-		}
+func NewConfig() (*Config, error) {
+	conf := &Config{}
+	err := conf.overrideWithEnvVars()
+	if err != nil {
+		return nil, err
 	}
-	return cfg
+	return conf, nil
 }
 
-//New Функция создает новый конфиг
-func New(filename string) (result *Config, err error) {
-	file, e := ioutil.ReadFile(filename)
-	if e != nil {
-		return nil, e
-	}
-	if e = json.Unmarshal(file, &result); e != nil {
-		return nil, e
-	}
-	return result, nil
+func (c *Config) overrideWithEnvVars() error {
+	return envconfig.Process(EnvPrefix, c)
 }

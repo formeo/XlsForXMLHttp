@@ -1,11 +1,14 @@
 package main
 
 import (
-	"XlsForXMLHttp/application"
 	"flag"
 	"fmt"
+	"github.com/formeo/XlsForXMLHttp/application"
+	"github.com/formeo/XlsForXMLHttp/config"
+	"github.com/formeo/XlsForXMLHttp/funchttp"
+	"github.com/formeo/XlsForXMLHttp/logger"
+	"github.com/getsentry/sentry-go"
 	"github.com/kardianos/service"
-	"log"
 	"os"
 )
 
@@ -62,23 +65,37 @@ func run(s service.Service) error {
 	return nil
 }
 func main() {
-	CommandLineParse()
-	svcConfig := &service.Config{
-		Name:        "GoXlsForOraService",
-		DisplayName: "Go Service XlsForOra",
-		Description: "This is an XlsForOra Go service.",
+	conf, err := config.NewConfig()
+	if err != nil {
+		panic(err)
+	}
+	err = logger.InitSentry(conf)
+	if err != nil {
+		panic(err)
+	}
+	log, err := logger.NewLogger(conf)
+	if err != nil {
+		sentry.CaptureException(err)
 	}
 
-	prg := application.AppNew()
+	httpFunc := funchttp.NewHttpApp(log, conf)
+	CommandLineParse()
+	svcConfig := &service.Config{
+		Name:        "GoXlsForXMLHTTPService",
+		DisplayName: "Go Service XlsForXMLHttp",
+		Description: "This is an XlsForXMLHttp Go service.",
+	}
+
+	prg := application.AppNew(log, httpFunc, conf)
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	_, err = s.Logger(nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 	if err = run(s); err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 }
