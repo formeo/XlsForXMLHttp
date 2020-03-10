@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"github.com/formeo/XlsForXMLHttp/filesutil"
 	"github.com/formeo/XlsForXMLHttp/xmlstruck"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,8 +14,18 @@ import (
 	"time"
 )
 
+type CommFunc struct {
+	filesutil *filesutil.UtilsApp
+	log  *zap.Logger
+	
+}
+
+func NewCommFunc() *CommFunc {
+	return &CommFunc{}
+}
+
 //CopyToArchive копирует все файлы в архив и удаляет из источника
-func CopyToArchive(PathDir string, PathArchDir string) (err error) {
+func(c *CommFunc) CopyToArchive(PathDir string, PathArchDir string) (err error) {
 	dir, err := os.Open(PathDir)
 	if err != nil {
 		return err
@@ -28,7 +39,7 @@ func CopyToArchive(PathDir string, PathArchDir string) (err error) {
 
 	for _, fi := range fileInfos {
 		if !fi.IsDir() {
-			filesutil.FileCopy(PathDir+fi.Name(), PathArchDir+fi.Name(), true)
+			c.filesutil.FileCopy(PathDir+fi.Name(), PathArchDir+fi.Name(), true)
 			err := os.Remove(PathDir + fi.Name())
 			if err != nil {
 				return err
@@ -41,7 +52,7 @@ func CopyToArchive(PathDir string, PathArchDir string) (err error) {
 }
 
 //MakeErrorXML формирует XML с ответом если произошла ошибка
-func MakeErrorXML(InErr string) (res []byte, err error) {
+func(c *CommFunc) MakeErrorXML(InErr string) (res []byte, err error) {
 	v := &xmlstruck.Servers{Version: "1", Code: "1", Message: InErr}
 	output, err := xml.MarshalIndent(v, "  ", "    ")
 	if err != nil {
@@ -55,7 +66,7 @@ func MakeErrorXML(InErr string) (res []byte, err error) {
 }
 
 //MakeBackupXML формирует ответ после функции бэкапа
-func MakeBackupXML() (res []byte, err error) {
+func(c *CommFunc) MakeBackupXML() (res []byte, err error) {
 	v := &xmlstruck.Servers{Version: "1", Code: "200", Message: "Success"}
 	output, err := xml.MarshalIndent(v, "  ", "    ")
 	if err != nil {
@@ -67,7 +78,7 @@ func MakeBackupXML() (res []byte, err error) {
 
 }
 
-func ParceZB(PathDir string) (Folder string, err error) {
+func(c *CommFunc) ParceZB(PathDir string) (Folder string, err error) {
 	t := time.Now()
 
 	Folder = t.Format("20060102150405")
@@ -82,43 +93,30 @@ func ParceZB(PathDir string) (Folder string, err error) {
 	if !result {
 		return Folder, err
 	}
-	log.Println("start parce")
+	c.log.Info("start parce")
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\filename.vbs", PathDir+"drvscrp\\", PathDir, Folder)
 	err = cmd.Run()
 	if err != nil {
 		return Folder, err
 	}
-	log.Println("finish parce")
+	c.log.Info("finish parce")
 	return Folder, nil
 }
 
-func MakeXMLtest() (res []byte, err error) {
-
-	res, err = ioutil.ReadFile("C:\\paynotes\\20160127092609\\zapsib.xml")
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
 //MakeXMLFromXLSZBvbs
-func MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
-	log.Println("MakeXMLFromXLSZB")
-	Folder, err := ParceZB(PathDir)
-
+func(c *CommFunc) MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
+	c.log.Info("MakeXMLFromXLSZB")
+	Folder, err := c.ParceZB(PathDir)
 	if err != nil {
 		return nil, err
 	}
-	log.Println("start make xml")
-	log.Println("PathDir", PathDir)
-	log.Println("Folder", Folder)
 
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\2.vbs", PathDir+Folder+"\\", Folder)
 	err = cmd.Run()
 	if err != nil {
 		return nil, err
 	}
-	log.Println("finish xml")
+	c.log.Info("finish xml")
 	res, err = ioutil.ReadFile(PathDir + Folder + "\\zapsib.xml")
 	if err != nil {
 		return nil, err
@@ -126,7 +124,7 @@ func MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
 	return res, nil
 }
 
-func MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
+func(c *CommFunc) MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\sber.vbs", PathDir)
 	err = cmd.Run()
 	if err != nil {
@@ -140,15 +138,14 @@ func MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
 
 }
 
-func ClearDirectory(PathDir string, PathDirToClear string) (err error) {
-
-	log.Println("start delete")
+func(c *CommFunc) ClearDirectory(PathDir string, PathDirToClear string) (err error) {
+	c.log.Info("start delete")
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\delete.vbs", PathDirToClear)
 	err = cmd.Run()
 	if err != nil {
 		return err
 	}
-	log.Println("finish delete")
+	c.log.Info("finish delete")
 	return nil
 
 }

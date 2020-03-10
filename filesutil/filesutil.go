@@ -10,9 +10,22 @@ import (
 	"strings"
 )
 
+type UtilsApp struct {
+
+}
+
+func NewUtilsApp() *UtilsApp {
+
+	return &UtilsApp{}
+}
+
+
 //копирует файлы
-func FileCopy(source, dest string, overwrite bool) (bool, error) {
+func(f *UtilsApp) FileCopy(source, dest string, overwrite bool) (bool, error) {
 	in, err := os.Open(source)
+	if in == nil {
+		return false, nil
+	}
 	defer in.Close()
 	if err != nil {
 		return false, err
@@ -24,6 +37,9 @@ func FileCopy(source, dest string, overwrite bool) (bool, error) {
 		}
 	}
 	out, eout := os.Create(dest)
+	if out == nil {
+		return false, nil
+	}
 	defer out.Close()
 	if eout != nil {
 		return false, eout
@@ -38,7 +54,7 @@ func FileCopy(source, dest string, overwrite bool) (bool, error) {
 }
 
 //DelForMask удаляет файл по маске
-func DelForMask(source, mask string) (bool, error) {
+func(f *UtilsApp) DeleteAtMask(source, mask string) (bool, error) {
 
 	dir, err := os.Open(source)
 	if err != nil {
