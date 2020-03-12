@@ -4,7 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/formeo/XlsForXMLHttp/application"
+	"github.com/formeo/XlsForXMLHttp/commonfunc"
 	"github.com/formeo/XlsForXMLHttp/config"
+	"github.com/formeo/XlsForXMLHttp/filesutil"
 	"github.com/formeo/XlsForXMLHttp/funchttp"
 	"github.com/formeo/XlsForXMLHttp/logger"
 	"github.com/getsentry/sentry-go"
@@ -77,8 +79,9 @@ func main() {
 	if err != nil {
 		sentry.CaptureException(err)
 	}
-
-	httpFunc := funchttp.NewHttpApp(log, conf)
+	filesUtil := filesutil.NewUtilsApp()
+	commFunc := commonfunc.NewCommFunc(filesUtil, log)
+	httpFunc := funchttp.NewHttpApp(log, conf, commFunc)
 	CommandLineParse()
 	svcConfig := &service.Config{
 		Name:        "GoXlsForXMLHTTPService",

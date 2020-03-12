@@ -11,17 +11,14 @@ import (
 )
 
 type UtilsApp struct {
-
 }
 
 func NewUtilsApp() *UtilsApp {
-
 	return &UtilsApp{}
 }
 
-
 //копирует файлы
-func(f *UtilsApp) FileCopy(source, dest string, overwrite bool) (bool, error) {
+func (f *UtilsApp) FileCopy(source, dest string, overwrite bool) (bool, error) {
 	in, err := os.Open(source)
 	if in == nil {
 		return false, nil
@@ -54,7 +51,7 @@ func(f *UtilsApp) FileCopy(source, dest string, overwrite bool) (bool, error) {
 }
 
 //DelForMask удаляет файл по маске
-func(f *UtilsApp) DeleteAtMask(source, mask string) (bool, error) {
+func (f *UtilsApp) DeleteAtMask(source, mask string) (bool, error) {
 
 	dir, err := os.Open(source)
 	if err != nil {

@@ -15,17 +15,19 @@ import (
 )
 
 type CommFunc struct {
-	filesutil *filesutil.UtilsApp
-	log  *zap.Logger
-	
+	filesUtil *filesutil.UtilsApp
+	log       *zap.Logger
 }
 
-func NewCommFunc() *CommFunc {
-	return &CommFunc{}
+func NewCommFunc(filesUtil *filesutil.UtilsApp, log *zap.Logger) *CommFunc {
+	return &CommFunc{
+		log:       log,
+		filesUtil: filesUtil,
+	}
 }
 
 //CopyToArchive копирует все файлы в архив и удаляет из источника
-func(c *CommFunc) CopyToArchive(PathDir string, PathArchDir string) (err error) {
+func (c *CommFunc) CopyToArchive(PathDir string, PathArchDir string) (err error) {
 	dir, err := os.Open(PathDir)
 	if err != nil {
 		return err
@@ -39,7 +41,7 @@ func(c *CommFunc) CopyToArchive(PathDir string, PathArchDir string) (err error) 
 
 	for _, fi := range fileInfos {
 		if !fi.IsDir() {
-			c.filesutil.FileCopy(PathDir+fi.Name(), PathArchDir+fi.Name(), true)
+			c.filesUtil.FileCopy(PathDir+fi.Name(), PathArchDir+fi.Name(), true)
 			err := os.Remove(PathDir + fi.Name())
 			if err != nil {
 				return err
@@ -52,7 +54,7 @@ func(c *CommFunc) CopyToArchive(PathDir string, PathArchDir string) (err error) 
 }
 
 //MakeErrorXML формирует XML с ответом если произошла ошибка
-func(c *CommFunc) MakeErrorXML(InErr string) (res []byte, err error) {
+func (c *CommFunc) MakeErrorXML(InErr string) (res []byte, err error) {
 	v := &xmlstruck.Servers{Version: "1", Code: "1", Message: InErr}
 	output, err := xml.MarshalIndent(v, "  ", "    ")
 	if err != nil {
@@ -66,7 +68,7 @@ func(c *CommFunc) MakeErrorXML(InErr string) (res []byte, err error) {
 }
 
 //MakeBackupXML формирует ответ после функции бэкапа
-func(c *CommFunc) MakeBackupXML() (res []byte, err error) {
+func (c *CommFunc) MakeBackupXML() (res []byte, err error) {
 	v := &xmlstruck.Servers{Version: "1", Code: "200", Message: "Success"}
 	output, err := xml.MarshalIndent(v, "  ", "    ")
 	if err != nil {
@@ -78,7 +80,7 @@ func(c *CommFunc) MakeBackupXML() (res []byte, err error) {
 
 }
 
-func(c *CommFunc) ParceZB(PathDir string) (Folder string, err error) {
+func (c *CommFunc) ParceZB(PathDir string) (Folder string, err error) {
 	t := time.Now()
 
 	Folder = t.Format("20060102150405")
@@ -86,7 +88,7 @@ func(c *CommFunc) ParceZB(PathDir string) (Folder string, err error) {
 	if err := os.MkdirAll(PathDir+Folder, 0777); err != nil {
 		return Folder, err
 	}
-	result, err := filesutil.DelForMask(PathDir+"\\"+Folder+"\\", "Sheet")
+	result, err := c.filesUtil.DeleteAtMask(PathDir+"\\"+Folder+"\\", "Sheet")
 	if err != nil {
 		return Folder, err
 	}
@@ -104,7 +106,7 @@ func(c *CommFunc) ParceZB(PathDir string) (Folder string, err error) {
 }
 
 //MakeXMLFromXLSZBvbs
-func(c *CommFunc) MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
+func (c *CommFunc) MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
 	c.log.Info("MakeXMLFromXLSZB")
 	Folder, err := c.ParceZB(PathDir)
 	if err != nil {
@@ -124,7 +126,7 @@ func(c *CommFunc) MakeXMLFromXLSZBvbs(PathDir string) (res []byte, err error) {
 	return res, nil
 }
 
-func(c *CommFunc) MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
+func (c *CommFunc) MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\sber.vbs", PathDir)
 	err = cmd.Run()
 	if err != nil {
@@ -138,7 +140,7 @@ func(c *CommFunc) MakeXMLFromXLSvbs(PathDir string) (res []byte, err error) {
 
 }
 
-func(c *CommFunc) ClearDirectory(PathDir string, PathDirToClear string) (err error) {
+func (c *CommFunc) ClearDirectory(PathDir string, PathDirToClear string) (err error) {
 	c.log.Info("start delete")
 	cmd := exec.Command("c:\\Windows\\System32\\cscript.exe", PathDir+"drvscrp\\delete.vbs", PathDirToClear)
 	err = cmd.Run()

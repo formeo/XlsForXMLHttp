@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/XlsForXMLHttp.iml" filepath="$PROJECT_DIR$/.idea/XlsForXMLHttp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/goxls.iml" filepath="$PROJECT_DIR$/.idea/goxls.iml" />
     </modules>
   </component>
 </project>

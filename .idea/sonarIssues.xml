@@ -103,6 +103,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/README.md">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app.Dockerfile">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/application/application.go">
           <value>
             <set />
@@ -114,6 +124,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/config/config.go">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/deploy/app.Dockerfile">
           <value>
             <set />
           </value>
