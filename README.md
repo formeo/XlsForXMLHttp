@@ -1,4 +1,4 @@
-# goxls service convert XLS files to XML for HTTP Server
+# XlsForXMLHttp service convert XLS files to XML for HTTP Server
 [![Build Status](https://travis-ci.org/formeo/XlsForXMLHttp.svg?branch=master)](https://travis-ci.org/formeo/XlsForXMLHttp)
 
 
@@ -17,7 +17,7 @@
 
 
 ## Install
-go get github.com/formeo/goxls
+go get github.com/formeo/XlsForXMLHttp
 
 ## License
 MIT:
