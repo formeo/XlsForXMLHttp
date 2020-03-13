@@ -1,6 +1,6 @@
 # XlsForXMLHttp service convert XLS files to XML for HTTP Server
 [![Build Status](https://travis-ci.org/formeo/XlsForXMLHttp.svg?branch=master)](https://travis-ci.org/formeo/XlsForXMLHttp)
-
+![Go](https://github.com/formeo/XlsForXMLHttp/workflows/Go/badge.svg?branch=master)
 
 ## Description
 
